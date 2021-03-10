@@ -5,8 +5,25 @@ const path = require("path");
 const app = express();
 const port = 3000;
 
-app.get("/", (req, res) => {
-	res.send("Hello World");
+app.use(express.static("public"));
+app.use(
+	express.urlencoded({
+		extended: true,
+	})
+);
+
+app.post("/form", (req, res) => {
+	const readData = fs.readFileSync("data.json");
+	let dataObject = JSON.parse(readData);
+	const inputData = {
+		username: req.body.username,
+		time: Date.now(),
+	};
+	dataObject["DATA"].push(inputData);
+	const writeData = JSON.stringify(dataObject);
+	fs.writeFileSync("data.json", writeData);
+	console.log(req);
+	res.send("Complete");
 });
 
 app.listen(port, () => {
